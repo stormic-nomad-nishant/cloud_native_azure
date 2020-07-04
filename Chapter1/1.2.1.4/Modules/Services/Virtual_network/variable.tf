@@ -27,7 +27,7 @@ variable "ddos-proc-name" {
 #*********************************
 
 variable "vpc-cidr" {
-  type = "list"
+  type = list
   default = ["10.0.0.0/16"]
 }
 variable "vpc-name" {
@@ -60,4 +60,3 @@ variable "subnet4-cidr" {
 variable "env-type" {
   default = "Devlopment"
 }
-

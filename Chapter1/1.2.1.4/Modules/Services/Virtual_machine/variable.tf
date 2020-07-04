@@ -20,7 +20,7 @@ variable "account_name" {
 ##################
 
 variable "vir-nic" {
-  type = "list"
+  type = list
   default = ["test"]
 }
 variable "source_key_path" {

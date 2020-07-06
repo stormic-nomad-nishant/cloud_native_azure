@@ -1,0 +1,39 @@
+{
+  "builders": [{
+    "type": "azure-arm",
+
+    "client_id": "<place-your-client_id-here>",
+    "client_secret": "<place-your-client_secret-here>",
+    "tenant_id": "<place-your-tenant-id-here>",
+    "subscription_id": "<place-your-subscription-here>",
+
+    "managed_image_resource_group_name": "CloudNativeAzure-group",
+    "managed_image_name": "myfirstPackerImage",
+
+    "os_type": "Linux",
+    "image_publisher": "Canonical",
+    "image_offer": "UbuntuServer",
+    "image_sku": "16.04-LTS",
+
+    "azure_tags": {
+        "env": "Production",
+        "task": "Image deployment"
+    },
+
+    "location": "East US",
+    "vm_size": "Standard_DS1_v2"
+  }],
+  "provisioners": [{
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": [
+      "apt-get update",
+      "apt-get upgrade -y",
+      "apt-get -y install nginx",
+      "apt-get -y install haproxy",
+
+      "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+  }]
+}

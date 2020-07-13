@@ -8,6 +8,5 @@ module "CloudNativeAzure-vnet" {
   network-secgrp-name = "cloudnative-public-firewall"
   resource-grp-name = "CloudNativeAzure-group"
   azure-dc = "westus"
-  ddos-proc-name = "cloudnative-stdddos-proc"
   env-type = "Production"
 }

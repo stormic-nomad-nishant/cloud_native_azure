@@ -20,21 +20,11 @@ resource "azurerm_network_security_rule" "generic-public-rules" {
   network_security_group_name = azurerm_network_security_group.generic-public-sec-grp.name
 }
 
-resource "azurerm_network_ddos_protection_plan" "generic-ddos-prc" {
-  location = var.azure-dc
-  name = var.ddos-proc-name
-  resource_group_name = var.resource-grp-name
-}
-
 resource "azurerm_virtual_network" "generic-virtual-cloud" {
   address_space = var.vpc-cidr
   location = var.azure-dc
   name = var.vpc-name
   resource_group_name = var.resource-grp-name
-  ddos_protection_plan {
-    enable = true
-    id = azurerm_network_ddos_protection_plan.generic-ddos-prc.id
-  }
   tags = {
     environment = var.env-type
   }

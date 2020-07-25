@@ -25,17 +25,47 @@
   }],
   "provisioners": [
     {
-    "execute_command": "sudo mkdir -p /etc/kubernetes/config'",
+      "type": "shell-local",
+      "command": ""
+    },
+  
+    {
+    "execute_command": "sudo mkdir -p /etc/kubernetes/config",
     "inline": [
       "wget https://github.com/etcd-io/etcd/releases/download/v3.4.10/etcd-v3.4.10-linux-amd64.tar.gz",
       "tar -xvf etcd-v3.4.10-linux-amd64.tar.gz",
       "sudo mv etcd-v3.4.10-linux-amd64/etcd* /usr/local/bin/",
       "sudo mkdir -p /etc/etcd /var/lib/etcd",
-      "sudo chmod 700 /var/lib/etcd"
-      "COPY HERE###############################"
+      "sudo chmod 700 /var/lib/etcd",
+      "sudo mkdir -p /etc/kubernetes/config",
+      "wget https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kube-apiserver", 
+      "wget https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kube-controller-manager",
+      "wget https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kube-scheduler",
+      "wget https://storage.googleapis.com/kubernetes-release/release/v1.18.6/bin/linux/amd64/kubectl",
+      "chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl",
+      "sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/",
+      "sudo mkdir -p /var/lib/kubernetes/"
+
     ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell"
+  },
+  
+  {
+  "type": "file",
+  "source": "Configs/K8S_Nodes/ETCD/Cert_Files/",
+  "destination": "/etc/etcd"
+  },
+  {
+  "type": "file",
+  "source": "Configs/CERTS/service-account-key.pem",
+  "destination": "/var/lib/kubernetes/"
+  },
+  {
+  "type": "file",
+  "source": "Configs/CERTS/service-account.pem",
+  "destination": "/var/lib/kubernetes/"
   }
+
 ]
 }

@@ -1,0 +1,16 @@
+{
+  "CN": "system:kube-controller-manager",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "India",
+      "L": "Delhi",
+      "O": "system:kube-controller-manager",
+      "OU": "CA",
+      "ST": "NewDelhi"
+    }
+  ]
+}

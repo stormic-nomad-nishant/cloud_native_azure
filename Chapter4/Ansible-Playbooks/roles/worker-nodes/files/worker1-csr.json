@@ -1,0 +1,16 @@
+{
+  "CN": "system:node:worker1",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "India",
+      "L": "Delhi",
+      "O": "system:nodes",
+      "OU": "CA",
+      "ST": "NewDelhi"
+    }
+  ]
+}

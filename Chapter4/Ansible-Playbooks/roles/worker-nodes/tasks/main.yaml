@@ -1,0 +1,5 @@
+---
+  - name: Generate Worker Certificates
+    local_action: shell chdir=roles/worker-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{ ansible_hostname }},{{loadbalancer_public_ip}},{{ ansible_host }} -profile=kubernetes worker0-csr.json | cfssljson -bare {{ ansible_hostname }}
+    when: ansible_hostname == "worker0"
+

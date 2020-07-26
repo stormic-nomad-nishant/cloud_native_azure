@@ -1,0 +1,4 @@
+- hosts: workers
+  become: true
+  roles:
+    - {role: worker-nodes}

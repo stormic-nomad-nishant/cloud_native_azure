@@ -1,2 +1,3 @@
 ---
 loadbalancer_public_ip: 52.1.1.1
+k8s_cluster_name: "cloud-native-azure"

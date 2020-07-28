@@ -6,19 +6,29 @@
   - name: Generate the kube-controller-manager client certificate and private key
   	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
   	run_once: true
-
-  - name: Generate kube-proxy client certificate signing request
-    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare kube-proxy
-	run_once: true    
   
   - name: Generate the kube-scheduler client certificate and private key
   	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-scheduler-csr.json | cfssljson -bare kube-scheduler
   	run_once: true  
-
-  - name: Generate the service-account certificate and private key
-	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes service-account-csr.json | cfssljson -bare service-account
-	run_once: true  
-
+ 
   - name: Generate kubernetes API Server Certificate
   	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{k8s_internal_virtual_ip }},{{ controller_private_ips_list }},{{ loadbalancer_public_ip }},127.0.0.1,kubernetes.default -profile=kubernetes kubernetes-csr.json | cfssljson -bare kubernetes
     run_once: true
+
+  - name: Generate the service-account certificate and private key
+	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes service-account-csr.json | cfssljson -bare service-account
+	run_once: true 
+	
+  - name: Copy the files to Controllers 
+  	copy: 
+  		src: "{{ item }}"
+  		dst: ~/
+  	with_items: 
+  	    - ca.pem 
+  	    - ca-key.pem 
+  	    - kubernetes-key.pem
+  	    - kubernetes.pem
+  	    - service-account-key.pem
+  	    - service-account.pem
+  
+  ## https://github.com/ivanfioravanti/kubernetes-the-hard-way-on-azure/blob/master/docs/05-kubernetes-configuration-files.md

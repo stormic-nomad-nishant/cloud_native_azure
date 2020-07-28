@@ -41,5 +41,73 @@
   	  - worker2-key.pem
   	when: ansible_hostname == "worker2"
 
+  - name: Create K8S configuration file for Worker0
+    local_action: "{{ item }}"
+    with_items: 
+      - "shell chdir=roles/worker-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ loadbalancer_public_ip }}:6443 --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config set-credentials system:node:{{ ansible_hostname }} --client-certificate={{ ansible_hostname }}.pem --client-key={{ ansible_hostname }}-key.pem --embed-certs=true --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config set-context default --cluster=kubernetes-the-hard-way --user=system:node:{{ ansible_hostname }} --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config use-context default --kubeconfig={{ ansible_hostname }}.kubeconfig"
+    when: ansible_hostname == "worker0"
+
+  - name: Create K8S configuration file for Worker1
+    local_action: "{{ item }}"
+    with_items: 
+      - "shell chdir=roles/worker-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ loadbalancer_public_ip }}:6443 --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config set-credentials system:node:{{ ansible_hostname }} --client-certificate={{ ansible_hostname }}.pem --client-key={{ ansible_hostname }}-key.pem --embed-certs=true --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config set-context default --cluster=kubernetes-the-hard-way --user=system:node:{{ ansible_hostname }} --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config use-context default --kubeconfig={{ ansible_hostname }}.kubeconfig"
+    when: ansible_hostname == "worker1"
+
+  - name: Create K8S configuration file for Worker2
+    local_action: "{{ item }}"
+    with_items: 
+      - "shell chdir=roles/worker-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ loadbalancer_public_ip }}:6443 --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config set-credentials system:node:{{ ansible_hostname }} --client-certificate={{ ansible_hostname }}.pem --client-key={{ ansible_hostname }}-key.pem --embed-certs=true --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config set-context default --cluster=kubernetes-the-hard-way --user=system:node:{{ ansible_hostname }} --kubeconfig={{ ansible_hostname }}.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config use-context default --kubeconfig={{ ansible_hostname }}.kubeconfig"
+    when: ansible_hostname == "worker2"
+
+  - name: Generate kube-proxy client certificate signing request
+    local_action: shell chdir=roles/worker-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-proxy-csr.json | cfssljson -bare kube-proxy
+    run_once: true    
+
+  - name: Create K8S Proxy Configuration file
+    local_action: "{{ item }}"
+    with_items: 
+      - "shell chdir=roles/worker-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ loadbalancer_public_ip }}:6443 --kubeconfig=kube-proxy.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config set-credentials kube-proxy --client-certificate=kube-proxy.pem --client-key=kube-proxy-key.pem --embed-certs=true --kubeconfig=kube-proxy.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config default   --cluster={{ k8s_cluster_name }} --user=kube-proxy --kubeconfig=kube-proxy.kubeconfig"
+      - "shell chdir=roles/worker-nodes/files kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig"
+  
+  - name: Copy kube-config worker and proxy file on Worker0
+    copy: 
+      src: "{{ item }}"
+      dest: ~/ 
+    with_items:
+      - worker0.kubeconfig
+      - kube-proxy.kubeconfig
+    when: ansible_hostname == "worker0"
+
+  - name: Copy kube-config worker and proxy file on Worker1
+    copy: 
+      src: "{{ item }}"
+      dest: ~/ 
+    with_items:
+      - worker1.kubeconfig
+      - kube-proxy.kubeconfig
+    when: ansible_hostname == "worker0"
+
+  - name: Copy kube-config worker and proxy file on Worker2
+    copy: 
+      src: "{{ item }}"
+      dest: ~/ 
+    with_items:
+      - worker2.kubeconfig
+      - kube-proxy.kubeconfig
+    when: ansible_hostname == "worker0"
+
+
+
 
 

@@ -2,3 +2,4 @@
 loadbalancer_public_ip : 52.1.1.1
 controller_private_ips_list : 10.240.0.10,10.240.0.11,10.240.0.12
 k8s_internal_virtual_ip: 10.32.0.1
+k8s_cluster_name: "cloud-native-azure"

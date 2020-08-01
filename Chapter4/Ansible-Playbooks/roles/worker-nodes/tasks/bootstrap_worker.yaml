@@ -1,0 +1,153 @@
+---
+  - name: Get Azure instance metadata for POD CIDR
+    shell: |
+      curl --silent -H Metadata:true http://169.254.169.254/metadata/instance/compute/tags?api-version=2017-08-01&format=text | cut -d : -f2
+    register: azure_meta_pod_cidr
+
+  - name: Save the azure_meta_pop_cidr
+    set_fact:
+      pod_cidr: "{{ azure_meta_pod_cidr.stdout }}"
+
+  - name: Upload the bridge file for CNI
+    template: 
+      src: 10-bridge.conf.j2
+      dest: /etc/cni/net.d/10-bridge.conf
+
+  - name: Copy loopback file
+    copy:
+      src: 99-loopback.conf
+      dest: /etc/cni/net.d/99-loopback.conf
+
+  - name: Make containerd dir
+    file:
+      path: /etc/containerd/
+      state: directory
+
+  - name: Copy containerd config file
+    copy:
+      src: config.toml
+      dest: /etc/containerd/config.toml
+
+  - name: Copy the containerd.service file 
+    copy:
+      src: containerd.service
+      dest: /etc/systemd/system/containerd.service
+
+  - name: Copy ca.pem to /var/lib/kubernetes
+    copy:
+      src: ca.pem
+      dest: /var/lib/kubernetes/ca.pem
+
+  - name: Copy worker0 keys 
+    copy:
+      src: "{{ item }}"
+      dest: /var/lib/kubelet/
+    with_items: 
+      - worker0-key.pem
+      - worker0.pem
+    when: ansible_hostname == "worker0"
+
+  - name: Copy worker1 keys 
+    copy:
+      src: "{{ item }}"
+      dest: /var/lib/kubelet/
+    with_items: 
+      - worker1-key.pem
+      - worker1.pem
+    when: ansible_hostname == "worker1"
+
+  - name: Copy worker2 keys 
+    copy:
+      src: "{{ item }}"
+      dest: /var/lib/kubelet/
+    with_items: 
+      - worker2-key.pem
+      - worker2.pem
+    when: ansible_hostname == "worker2"
+
+  - name: Copy kubeconfig worker0 
+    copy:
+      src: worker0.kubeconfig 
+      dest: /var/lib/kubelet/kubeconfig/
+    when: ansible_hostname == "worker0"
+
+  - name: Copy kubeconfig worker1
+    copy:
+      src: worker1.kubeconfig 
+      dest: /var/lib/kubelet/kubeconfig/
+    when: ansible_hostname == "worker1"
+
+  - name: Copy kubeconfig worker2 
+    copy:
+      src: worker2.kubeconfig 
+      dest: /var/lib/kubelet/kubeconfig/
+    when: ansible_hostname == "worker2"
+
+  - name: Copy kublet-config to worker0
+    template:
+      src: kubelet-config.yaml.j2
+      dest: /var/lib/kubelet/kubelet-config.yaml
+    when: ansible_hostname == "worker0"
+
+  - name: Copy kublet-config to worker1
+    template:
+      src: kubelet-config.yaml.j2
+      dest: /var/lib/kubelet/kubelet-config.yaml
+    when: ansible_hostname == "worker1"
+
+  - name: Copy kublet-config to worker2
+    template:
+      src: kubelet-config.yaml.j2
+      dest: /var/lib/kubelet/kubelet-config.yaml
+    when: ansible_hostname == "worker2"
+
+  - name: Copy kubelet.service to remote workers
+    copy:
+      src: kubelet.service
+      dest: /etc/systemd/system/kubelet.service
+
+  - name: Copy kube-proxy.kubeconfig to /var/lib/kube-proxy/kubeconfig
+    copy:
+      src: kube-proxy.kubeconfig 
+      dest: /var/lib/kube-proxy/kubeconfig
+
+  - name: Copy kube-proxy-config.yaml config file
+    template: 
+      src: kube-proxy-config.yaml.j2
+      dest: /var/lib/kube-proxy/kube-proxy-config.yaml
+
+  - name: Copy kube-proxy service file
+    copy:
+      src: kube-proxy.service
+      dest: /etc/systemd/system/kube-proxy.service
+
+  - name: Start containerd workers
+    systemd:
+      state: started
+      daemon_reload: yes
+      name: containerd
+      enabled: yes
+
+  - name: Start kubelet workers
+    systemd:
+      state: started
+      daemon_reload: yes
+      name: kubelet
+      enabled: yes
+
+  - name: Start kube-proxy workers
+    systemd:
+      state: started
+      daemon_reload: yes
+      name: kube-proxy
+      enabled: yes
+
+  - name: Check the kuberneters worker nodes
+    shell: kubectl get nodes
+    register: kuberctl_getnodes
+
+  - name: Show final output
+    debug:
+      var: kuberctl_getnodes.stdout_lines
+
+

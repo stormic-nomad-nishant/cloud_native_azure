@@ -107,6 +107,9 @@
       - kube-proxy.kubeconfig
     when: ansible_hostname == "worker0"
 
+  - name: Bootstrap Worker nodes 
+    include: bootstrap_worker.yaml
+
 
 
 

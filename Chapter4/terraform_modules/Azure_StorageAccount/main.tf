@@ -1,3 +1,7 @@
+provider "azurerm" {
+    features {}
+}
+
 resource "azurerm_storage_account" "generic-storage-ac" {
   name                     = var.storage-account-name
   resource_group_name      = var.resource-grp-name
@@ -19,11 +23,11 @@ resource "azurerm_storage_container" "generic-container" {
 }
 ##################################################################
 
-# resource "azurerm_storage_blob" "generic-blob" {
-#   name = var.blob-name
-#   storage_account_name   = azurerm_storage_account.generic-storage-ac.name
-#   storage_container_name = azurerm_storage_container.generic-container.name
-#
-#   type = "Page"
-#   size = 5120
-# }
+resource "azurerm_storage_blob" "generic-blob" {
+  name = var.blob-name
+  storage_account_name   = azurerm_storage_account.generic-storage-ac.name
+  storage_container_name = azurerm_storage_container.generic-container.name
+
+  type = "Page"
+  size = 5120
+}

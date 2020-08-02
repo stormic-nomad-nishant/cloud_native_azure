@@ -33,3 +33,12 @@ variable "storage-container-access" {
 variable "blob-name" {
   default = "test"
 }
+
+
+variable "env" {
+  default = "stg"
+}
+
+variable "type-of-cluster"{
+  default = "test"
+}

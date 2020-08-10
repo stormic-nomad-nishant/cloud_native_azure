@@ -1,3 +1,7 @@
+provider "azurerm" {
+    features {}
+}
+
 resource "azurerm_public_ip" "generic-public-ip" {
   name                = var.name_of_lb
   location            = var.azure-dc

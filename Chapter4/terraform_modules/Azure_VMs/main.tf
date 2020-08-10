@@ -40,8 +40,8 @@ resource "azurerm_network_interface_backend_address_pool_association" "generic-p
 
 resource "azurerm_virtual_machine" "vm" {
   name                  = "${var.vm_prefix}-${count.index}"
-  location              = "${var.location}"
-  resource_group_name   = "${var.resource_group_name}"
+  location              = var.azure-dc
+  resource_group_name   = var.resource-grp-name
   network_interface_ids = ["${azurerm_network_interface.nic.*.id[count.index]}"]
   vm_size               = "${var.vm_size}"
 
@@ -65,13 +65,13 @@ resource "azurerm_virtual_machine" "vm" {
 
    os_profile {
     computer_name  = "${var.vm_prefix}-${count.index}"
-    admin_username = "${var.username}"
+    admin_username = var.username
   }
   os_profile_linux_config {
     disable_password_authentication = true
 
     ssh_keys {
       path     = "/home/${var.username}/.ssh/authorized_keys"
-      key_data = "${var.ssh_key}"
+      key_data = var.ssh_key
     }
   }

@@ -4,8 +4,9 @@
 
     "client_id": "",
     "client_secret": "",
-    "tenant_id": " ",
+    "tenant_id": "",
     "subscription_id": "",
+
 
     "managed_image_resource_group_name": "K8Scluster",
     "managed_image_name": "k8s_worker",

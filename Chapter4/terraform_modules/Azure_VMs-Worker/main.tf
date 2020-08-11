@@ -1,3 +1,8 @@
+provider "azurerm" {
+    features {}
+}
+
+
 resource "azurerm_availability_set" "generic-as" {
   name                = "${var.vm_prefix}-as"
   location            = var.azure-dc
@@ -25,16 +30,9 @@ resource "azurerm_network_interface" "generic-nic" {
   ip_configuration {
     name                          = "${var.vm_prefix}-${count.index}-ip-config"
     subnet_id                     = var.subnet_id
-    private_ip_address_allocation = "${element(var.private_ip_addresses, count.index) != "" ? "static" : "dynamic"}"
-    private_ip_address            = "${element(var.private_ip_addresses, count.index)}"
+    private_ip_address_allocation = element(var.private_ip_addresses, count.index) != "" ? "static" : "dynamic"
+    private_ip_address            = element(var.private_ip_addresses, count.index)
   }
-}
-
-resource "azurerm_network_interface_backend_address_pool_association" "generic-pool" {
-  count                   = var.vm_count
-  network_interface_id    = "${azurerm_network_interface.generic-nic.*.id[count.index]}"
-  ip_configuration_name   = "${var.vm_prefix}-${count.index}-ip-config"
-  backend_address_pool_id = "${var.lb_backend_pool != "" ? var.lb_backend_pool : ""}"
 }
 
 
@@ -42,12 +40,12 @@ resource "azurerm_virtual_machine" "vm" {
   name                  = "${var.vm_prefix}-${count.index}"
   location              = var.azure-dc
   resource_group_name   = var.resource-grp-name
-  network_interface_ids = ["${azurerm_network_interface.nic.*.id[count.index]}"]
-  vm_size               = "${var.vm_size}"
+  network_interface_ids = ["${azurerm_network_interface.generic-nic.*.id[count.index]}"]
+  vm_size               = var.vm_size
 
-  count = "${var.vm_count}"
+  count = var.vm_count
 
-  availability_set_id = "${azurerm_availability_set.generic-as.id}"
+  availability_set_id = azurerm_availability_set.generic-as.id
   delete_os_disk_on_termination = true
   delete_data_disks_on_termination = true
 
@@ -75,3 +73,4 @@ resource "azurerm_virtual_machine" "vm" {
       key_data = var.ssh_key
     }
   }
+}

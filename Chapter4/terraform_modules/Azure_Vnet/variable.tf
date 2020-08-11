@@ -33,3 +33,8 @@ variable "vnet-subnet-name" {
 variable "vnet-sec-group-name" {
   default = "test"
 }
+
+
+variable "subnet_id" {
+  default = "test"
+}

@@ -50,3 +50,7 @@ variable "env" {
 variable "vm_size"{
   default = "Standard_D1_v2"
 }
+
+variable "public_ip_address_id"{
+  type = list
+}

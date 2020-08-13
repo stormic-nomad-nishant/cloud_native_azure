@@ -14,6 +14,6 @@ variable "type-of-cluster"{
   default = "test"
 }
 
-variable "name_of_lb"{
+variable "name_of_ip"{
   default = "test"
 }

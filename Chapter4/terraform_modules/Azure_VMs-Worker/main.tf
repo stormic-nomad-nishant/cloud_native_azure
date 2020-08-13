@@ -31,13 +31,14 @@ resource "azurerm_network_interface" "generic-nic" {
     name                          = "${var.vm_prefix}-${count.index}-ip-config"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = element(var.private_ip_addresses, count.index) != "" ? "static" : "dynamic"
+    public_ip_address_id          = element(var.public_ip_address_id, count.index)
     private_ip_address            = element(var.private_ip_addresses, count.index)
   }
 }
 
 
 resource "azurerm_virtual_machine" "vm" {
-  name                  = "${var.vm_prefix}-${count.index}"
+  name                  = "${var.vm_prefix}${count.index}"
   location              = var.azure-dc
   resource_group_name   = var.resource-grp-name
   network_interface_ids = ["${azurerm_network_interface.generic-nic.*.id[count.index]}"]
@@ -54,7 +55,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   storage_os_disk {
-    name              = "${var.vm_prefix}-${count.index}-osdisk"
+    name              = "${var.vm_prefix}${count.index}-osdisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -62,7 +63,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
    os_profile {
-    computer_name  = "${var.vm_prefix}-${count.index}"
+    computer_name  = "${var.vm_prefix}${count.index}"
     admin_username = var.username
   }
   os_profile_linux_config {

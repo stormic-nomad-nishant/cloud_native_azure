@@ -5,6 +5,7 @@ module "master" {
   private_ip_addresses = ["10.240.0.10", "10.240.0.11", "10.240.0.12"]
   vm_prefix = "controller"
   username = "ubuntu"
+  public_ip_address_id = [data.terraform_remote_state.k8s_public_ip.outputs.Controller0_IP_ID,data.terraform_remote_state.k8s_public_ip.outputs.Controller1_IP_ID,data.terraform_remote_state.k8s_public_ip.outputs.Controller2_IP_ID]
   vm_size = "Standard_D1_v2"
   env = "dev"
   type-of-cluster = "k8s-experments"
@@ -22,6 +23,7 @@ module "worker" {
   azure-dc = "eastus2"
   resource-grp-name = "K8Scluster"
   env = "dev"
+  public_ip_address_id = [data.terraform_remote_state.k8s_public_ip.outputs.Worker0_IP_ID,data.terraform_remote_state.k8s_public_ip.outputs.Worker1_IP_ID,data.terraform_remote_state.k8s_public_ip.outputs.Worker2_IP_ID]
   vm_size = "Standard_D1_v2"
   type-of-cluster = "k8s-experments"
   subnet_id = data.terraform_remote_state.k8s_vnet.outputs.subnet_id

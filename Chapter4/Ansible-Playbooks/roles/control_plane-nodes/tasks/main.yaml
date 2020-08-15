@@ -22,7 +22,7 @@
   - name: Copy the files to Controllers 
     copy: 
       src: "{{ item }}"
-      dst: ~/
+      dest: ~/
     with_items: 
         - ca.pem 
         - ca-key.pem 
@@ -31,32 +31,56 @@
         - service-account-key.pem
         - service-account.pem
 
-  - name: Generate kube-controller-manager k8s config file
-    local_action: "{{ item }}"
-    with_items: 
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-controller-manager.kubeconfig"    
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-credentials system:kube-controller-manager --client-certificate=kube-controller-manager.pem --client-key=kube-controller-manager-key.pem --embed-certs=true --kubeconfig=kube-controller-manager.kubeconfig"
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig"
-      - "shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig"
+
+  - name: Generate kube-controller-manager k8s config file - Step I 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-controller-manager.kubeconfig
+    run_once: true
+
+  - name: Generate kube-controller-manager k8s config file - Step II
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-credentials system:kube-controller-manager --client-certificate=kube-controller-manager.pem --client-key=kube-controller-manager-key.pem --embed-certs=true --kubeconfig=kube-controller-manager.kubeconfig
+    run_once: true
+
+  - name: Generate kube-controller-manager k8s config file - Step III
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig
+    run_once: true
+
+  - name: Generate kube-controller-manager k8s config file - Step IV
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
+    run_once: true
+#####
+  - name: Generate the kube-scheduler k8s config file - Step I 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-scheduler.kubeconfig
+    run_once: true
+
+  - name: Generate the kube-scheduler k8s config file - Step II 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-credentials system:kube-scheduler --client-certificate=kube-scheduler.pem --client-key=kube-scheduler-key.pem --embed-certs=true --kubeconfig=kube-scheduler.kubeconfig
+    run_once: true    
+
+  - name: Generate the kube-scheduler k8s config file - Step III 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig
+    run_once: true    
+
+  - name: Generate the kube-scheduler k8s config file - Step IV 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
+    run_once: true    
+#####
+
+  - name: Generate the admin k8s config file - Step I
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=admin.kubeconfig
     run_once: true 
 
-  - name: Generate the kube-scheduler k8s config file
-    local_action: "{{ item }}"
-    with_items: 
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-scheduler.kubeconfig"
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-credentials system:kube-scheduler --client-certificate=kube-scheduler.pem --client-key=kube-scheduler-key.pem --embed-certs=true --kubeconfig=kube-scheduler.kubeconfig"
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig"
-      - "shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig"
+  - name: Generate the admin k8s config file - Step II
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-credentials admin --client-certificate=admin.pem --client-key=admin-key.pem --embed-certs=true --kubeconfig=admin.kubeconfig
     run_once: true 
 
-  - name: Generate the admin k8s config file 
-    local_action: "{{ item }}"
-    with_items: 
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=admin.kubeconfig"
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-credentials admin --client-certificate=admin.pem --client-key=admin-key.pem --embed-certs=true --kubeconfig=admin.kubeconfig"
-      - "shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=admin --kubeconfig=admin.kubeconfig"
-      - "shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=admin.kubeconfig"
+  - name: Generate the admin k8s config file - Step III
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=admin --kubeconfig=admin.kubeconfig
     run_once: true 
+
+  - name: Generate the admin k8s config file - Step IV
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=admin.kubeconfig
+    run_once: true 
+#####
 
   - name: Copy the Config files to all controllers 
     copy:

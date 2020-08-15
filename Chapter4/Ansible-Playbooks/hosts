@@ -1,12 +1,18 @@
 #[localhost]
 #localhost
 
-#[etcd-control-plane]
-
+[controllers]
+inventory_hostname=controller0 ansible_host=40.70.3.48
+inventory_hostname=controller1 ansible_host=40.70.3.22
+inventory_hostname=controller2 ansible_host=40.70.3.19
 
 [workers]
-inventory_hostname=worker0 ansible_host=172.23.227.7
+inventory_hostname=worker0 ansible_host=40.70.3.141
+inventory_hostname=worker1 ansible_host=40.70.3.31
+inventory_hostname=worker2 ansible_host=40.70.3.3
 
 [all:vars]
-ansible_user = nissingh
-ansible_ssh_private_key_file = /Users/nissingh/.ssh/nissingh_at_linkedin.com_ssh_key
+ansible_user = ubuntu
+ansible_ssh_private_key_file = /Users/nissingh/TESTING/SSH_KEYS/id_rsa
+
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'

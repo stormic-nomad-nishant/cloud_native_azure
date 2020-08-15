@@ -1,0 +1,4 @@
+- hosts: controllers
+  become: true
+  roles:
+    - {role: control_plane-nodes}

@@ -1,7 +1,7 @@
 ---
   - name: Copy Keys and encryption configs 
     copy:
-      src: {{ item }}
+      src: "{{ item }}"
       dest: /var/lib/kubernetes/
     with_items: 
       - ca.pem

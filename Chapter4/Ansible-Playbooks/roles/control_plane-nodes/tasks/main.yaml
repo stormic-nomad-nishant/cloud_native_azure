@@ -1,35 +1,35 @@
 ---
   - name: Generate k8s Admin Client Cert & Private key
-  	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
-  	run_once: true
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
+    run_once: true
 
   - name: Generate the kube-controller-manager client certificate and private key
-  	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
-  	run_once: true
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+    run_once: true
   
   - name: Generate the kube-scheduler client certificate and private key
-  	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-scheduler-csr.json | cfssljson -bare kube-scheduler
-  	run_once: true  
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-scheduler-csr.json | cfssljson -bare kube-scheduler
+    run_once: true  
  
   - name: Generate kubernetes API Server Certificate
-  	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{k8s_internal_virtual_ip }},{{ controller_private_ips_list }},{{ loadbalancer_public_ip }},127.0.0.1,kubernetes.default -profile=kubernetes kubernetes-csr.json | cfssljson -bare kubernetes
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{k8s_internal_virtual_ip }},{{ controller_private_ips_list }},{{ loadbalancer_public_ip }},127.0.0.1,kubernetes.default -profile=kubernetes kubernetes-csr.json | cfssljson -bare kubernetes
     run_once: true
 
   - name: Generate the service-account certificate and private key
-	local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes service-account-csr.json | cfssljson -bare service-account
-	run_once: true 
-	
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes service-account-csr.json | cfssljson -bare service-account
+    run_once: true
+
   - name: Copy the files to Controllers 
-  	copy: 
-  		src: "{{ item }}"
-  		dst: ~/
-  	with_items: 
-  	    - ca.pem 
-  	    - ca-key.pem 
-  	    - kubernetes-key.pem
-  	    - kubernetes.pem
-  	    - service-account-key.pem
-  	    - service-account.pem
+    copy: 
+      src: "{{ item }}"
+      dst: ~/
+    with_items: 
+        - ca.pem 
+        - ca-key.pem 
+        - kubernetes-key.pem
+        - kubernetes.pem
+        - service-account-key.pem
+        - service-account.pem
 
   - name: Generate kube-controller-manager k8s config file
     local_action: "{{ item }}"
@@ -69,7 +69,7 @@
 
   - name: Copy Encruption Key Config file to controllers
     template: 
-      - src: encryption-config.yaml.j2
+        src: encryption-config.yaml.j2
         dest: ~/encryption-config.yaml
 
 ## Bootstrap ETCD

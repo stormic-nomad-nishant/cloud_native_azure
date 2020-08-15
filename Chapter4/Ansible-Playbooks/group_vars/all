@@ -1,0 +1,14 @@
+---
+#Change loadbalancer_public_ip
+loadbalancer_public_ip : 40.70.3.6
+controller_private_ips_list : 10.240.0.10,10.240.0.11,10.240.0.12
+# Keep k8s_internal_virtual_ip as it is
+k8s_internal_virtual_ip: 10.32.0.1
+k8s_cluster_cidr: "10.200.0.0/16" 
+k8s_cluster_name: "cloud-native-azure"
+# Generate your own encryption_key : "head -c 32 /dev/urandom | base64"
+encryption_key: 1u+nY7I4UIH5hmoLq1LQ28yqrzjBaQrHZLpCCEvVHoY
+#ETC config below for systemd file, place private ip's. No need to change
+controller_0_ip: 10.240.0.10
+controller_1_ip: 10.240.0.11
+controller_2_ip: 10.240.0.12

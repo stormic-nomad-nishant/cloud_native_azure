@@ -3,26 +3,31 @@
     copy:
       src: "{{ item }}"
       dest: /etc/etcd/
+    become: yes
     with_items: 
       - kubernetes-key.pem
       - kubernetes.pem
+      - ca.pem
 
   - name: Place etcd.service to hosts - controller0
     template:
       src: etcd.service.j2
       dest: /etc/systemd/system/etcd.service
+    become: yes
     when: ansible_hostname == "controller0"
 
   - name: Place etcd.service to hosts - controller1
     template:
       src: etcd.service.j2
       dest: /etc/systemd/system/etcd.service
+    become: yes
     when: ansible_hostname == "controller1"
 
   - name: Place etcd.service to hosts - controller2
     template:
       src: etcd.service.j2
       dest: /etc/systemd/system/etcd.service
+    become: yes
     when: ansible_hostname == "controller2"
 
   - name: start etcd
@@ -31,6 +36,7 @@
       daemon_reload: yes
       name: etcd
       enabled: yes
+    become: yes
 
   - name: List etcd members
     shell: sudo ETCDCTL_API=3 etcdctl member list --endpoints=https://127.0.0.1:2379 --cacert=/etc/etcd/ca.pem --cert=/etc/etcd/kubernetes.pem --key=/etc/etcd/kubernetes-key.pem
@@ -39,4 +45,5 @@
   - name: Show output
     debug: 
       var: etcd_run_output.stdout_lines
+    become: yes
 

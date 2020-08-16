@@ -4,23 +4,27 @@
       src: 10-bridge-worker0.conf.j2
       dest: /etc/cni/net.d/10-bridge.conf
     when: ansible_hostname == "worker0"
+    become: true
 
   - name: Upload the bridge file for CNI - worker1 PODCIDR
     template: 
       src: 10-bridge-worker1.conf.j2
       dest: /etc/cni/net.d/10-bridge.conf
     when: ansible_hostname == "worker1"
+    become: true
 
   - name: Upload the bridge file for CNI - worker2 PODCIDR
     template: 
       src: 10-bridge-worker2.conf.j2
       dest: /etc/cni/net.d/10-bridge.conf
     when: ansible_hostname == "worker2"
+    become: true
 
   - name: Copy loopback file
     copy:
       src: 99-loopback.conf
       dest: /etc/cni/net.d/99-loopback.conf
+    become: true
 
   - name: Make containerd dir
     file:
@@ -31,16 +35,19 @@
     copy:
       src: config.toml
       dest: /etc/containerd/config.toml
+    become: true
 
   - name: Copy the containerd.service file 
     copy:
       src: containerd.service
       dest: /etc/systemd/system/containerd.service
+    become: true
 
   - name: Copy ca.pem to /var/lib/kubernetes
     copy:
       src: ca.pem
       dest: /var/lib/kubernetes/ca.pem
+    become: true
 
   - name: Copy worker0 keys 
     copy:
@@ -50,6 +57,7 @@
       - worker0-key.pem
       - worker0.pem
     when: ansible_hostname == "worker0"
+    become: true
 
   - name: Copy worker1 keys 
     copy:
@@ -59,6 +67,7 @@
       - worker1-key.pem
       - worker1.pem
     when: ansible_hostname == "worker1"
+    become: true
 
   - name: Copy worker2 keys 
     copy:
@@ -68,57 +77,67 @@
       - worker2-key.pem
       - worker2.pem
     when: ansible_hostname == "worker2"
+    become: true
 
   - name: Copy kubeconfig worker0 
     copy:
       src: worker0.kubeconfig 
-      dest: /var/lib/kubelet/kubeconfig/
+      dest: /var/lib/kubelet/kubeconfig
     when: ansible_hostname == "worker0"
+    become: true
 
   - name: Copy kubeconfig worker1
     copy:
       src: worker1.kubeconfig 
-      dest: /var/lib/kubelet/kubeconfig/
+      dest: /var/lib/kubelet/kubeconfig
     when: ansible_hostname == "worker1"
+    become: true
 
   - name: Copy kubeconfig worker2 
     copy:
       src: worker2.kubeconfig 
-      dest: /var/lib/kubelet/kubeconfig/
+      dest: /var/lib/kubelet/kubeconfig
     when: ansible_hostname == "worker2"
+    become: true
 
   - name: Copy kublet-config to worker0
     template:
       src: kubelet-config-worker0.yaml.j2
       dest: /var/lib/kubelet/kubelet-config.yaml
     when: ansible_hostname == "worker0"
+    become: true
 
   - name: Copy kublet-config to worker1
     template:
       src: kubelet-config-worker1.yaml.j2
       dest: /var/lib/kubelet/kubelet-config.yaml
     when: ansible_hostname == "worker1"
+    become: true
 
   - name: Copy kublet-config to worker2
     template:
       src: kubelet-config-worker2.yaml.j2
       dest: /var/lib/kubelet/kubelet-config.yaml
     when: ansible_hostname == "worker2"
+    become: true
 
   - name: Copy kubelet.service to remote workers
     copy:
       src: kubelet.service
       dest: /etc/systemd/system/kubelet.service
+    become: true
 
   - name: Copy kube-proxy.kubeconfig to /var/lib/kube-proxy/kubeconfig
     copy:
       src: kube-proxy.kubeconfig 
       dest: /var/lib/kube-proxy/kubeconfig
+    become: true
 
   - name: Copy kube-proxy-config.yaml config file
     template: 
       src: kube-proxy-config.yaml.j2
       dest: /var/lib/kube-proxy/kube-proxy-config.yaml
+    become: true
 
   - name: Copy kube-proxy service file
     copy:

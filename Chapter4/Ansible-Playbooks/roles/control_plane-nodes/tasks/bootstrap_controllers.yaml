@@ -1,8 +1,9 @@
 ---
-  - name: Copy Keys and encryption configs 
+  - name: Copy Keys 
     copy:
       src: "{{ item }}"
       dest: /var/lib/kubernetes/
+    become: yes
     with_items: 
       - ca.pem
       - ca-key.pem
@@ -11,6 +12,12 @@
       - service-account-key.pem
       - service-account.pem
       - encryption-config.yaml
+
+  - name: Copy encryption configs 
+    template:
+      src: encryption-config.yaml.j2
+      dest: /var/lib/kubernetes/encryption-config.yaml
+
 
   - name: Configure Service file for controller 0
     template:
@@ -75,6 +82,10 @@
       daemon_reload: yes
       name: kube-scheduler
       enabled: yes
+
+  - name: Pause for 15 sec 
+    pause:
+      seconds: 15
 
   - name: Check get components
     shell: kubectl get componentstatuses

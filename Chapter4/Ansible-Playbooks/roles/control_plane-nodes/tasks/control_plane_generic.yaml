@@ -1,0 +1,97 @@
+---
+  - name: Generate k8s Admin Client Cert & Private key
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
+    run_once: true
+
+  - name: Generate the kube-controller-manager client certificate and private key
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager
+    run_once: true
+  
+  - name: Generate the kube-scheduler client certificate and private key
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes kube-scheduler-csr.json | cfssljson -bare kube-scheduler
+    run_once: true  
+ 
+  - name: Generate kubernetes API Server Certificate
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{k8s_internal_virtual_ip }},{{ controller_private_ips_list }},{{ loadbalancer_public_ip }},127.0.0.1,kubernetes.default -profile=kubernetes kubernetes-csr.json | cfssljson -bare kubernetes
+    run_once: true
+
+  - name: Generate the service-account certificate and private key
+    local_action: shell chdir=roles/control_plane-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes service-account-csr.json | cfssljson -bare service-account
+    run_once: true
+
+  - name: Copy the files to Controllers 
+    copy: 
+      src: "{{ item }}"
+      dest: ~/
+    with_items: 
+        - ca.pem 
+        - ca-key.pem 
+        - kubernetes-key.pem
+        - kubernetes.pem
+        - service-account-key.pem
+        - service-account.pem
+
+
+  - name: Generate kube-controller-manager k8s config file - Step I 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-controller-manager.kubeconfig
+    run_once: true
+
+  - name: Generate kube-controller-manager k8s config file - Step II
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-credentials system:kube-controller-manager --client-certificate=kube-controller-manager.pem --client-key=kube-controller-manager-key.pem --embed-certs=true --kubeconfig=kube-controller-manager.kubeconfig
+    run_once: true
+
+  - name: Generate kube-controller-manager k8s config file - Step III
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig
+    run_once: true
+
+  - name: Generate kube-controller-manager k8s config file - Step IV
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
+    run_once: true
+#####
+  - name: Generate the kube-scheduler k8s config file - Step I 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-scheduler.kubeconfig
+    run_once: true
+
+  - name: Generate the kube-scheduler k8s config file - Step II 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-credentials system:kube-scheduler --client-certificate=kube-scheduler.pem --client-key=kube-scheduler-key.pem --embed-certs=true --kubeconfig=kube-scheduler.kubeconfig
+    run_once: true    
+
+  - name: Generate the kube-scheduler k8s config file - Step III 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig
+    run_once: true    
+
+  - name: Generate the kube-scheduler k8s config file - Step IV 
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
+    run_once: true    
+#####
+
+  - name: Generate the admin k8s config file - Step I
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=admin.kubeconfig
+    run_once: true 
+
+  - name: Generate the admin k8s config file - Step II
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-credentials admin --client-certificate=admin.pem --client-key=admin-key.pem --embed-certs=true --kubeconfig=admin.kubeconfig
+    run_once: true 
+
+  - name: Generate the admin k8s config file - Step III
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=admin --kubeconfig=admin.kubeconfig
+    run_once: true 
+
+  - name: Generate the admin k8s config file - Step IV
+    local_action: shell chdir=roles/control_plane-nodes/files kubectl config use-context default --kubeconfig=admin.kubeconfig
+    run_once: true 
+#####
+
+  - name: Copy the Config files to all controllers 
+    copy:
+      src: "{{ item }}"
+      dest: ~/ 
+    with_items:
+      - admin.kubeconfig
+      - kube-controller-manager.kubeconfig
+      - kube-scheduler.kubeconfig
+
+  - name: Copy Encryption Key Config file to controllers
+    template: 
+        src: encryption-config.yaml.j2
+        dest: ~/encryption-config.yaml

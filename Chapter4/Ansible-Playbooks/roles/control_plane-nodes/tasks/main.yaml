@@ -1,10 +1,10 @@
 ---
-  - name: Bootstrap ETD nodes 
-    include: control_plane_generic.yaml
+#  - name: Bootstrap ETD nodes 
+#    include: control_plane_generic.yaml
 
 ## Bootstrap ETCD
-  - name: Bootstrap ETD nodes 
-    include: bootstrap_etcd.yaml
+#  - name: Bootstrap ETD nodes 
+#    include: bootstrap_etcd.yaml
 
 ## Bootstrap Controller
   - name: Bootstrap controller nodes 

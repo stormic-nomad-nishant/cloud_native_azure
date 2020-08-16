@@ -16,6 +16,7 @@
     template:
       src: encryption-config.yaml.j2
       dest: /var/lib/kubernetes/encryption-config.yaml
+    become: yes
 
 
   - name: Configure Service file for controller 0
@@ -23,43 +24,51 @@
       src: kube-apiserver.service.j2
       dest: /etc/systemd/system/kube-apiserver.service
     when: ansible_hostname == "controller0"
+    become: yes
 
   - name: Configure Service file for controller 1
     template:
       src: kube-apiserver.service.j2
       dest: /etc/systemd/system/kube-apiserver.service
     when: ansible_hostname == "controller1"
+    become: yes
 
   - name: Configure Service file for controller 2
     template:
       src: kube-apiserver.service.j2
       dest: /etc/systemd/system/kube-apiserver.service
     when: ansible_hostname == "controller2"
+    become: yes
 
   - name: Copy kube-controller-manager.kubeconfig to all controllers
     copy: 
       src: kube-controller-manager.kubeconfig
       dest: /var/lib/kubernetes/
+    become: yes
 
   - name: Copy the systemd service filr for kube-controller-manager
     template: 
       src: kube-controller-manager.service.j2
-      dest: kube-controller-manager.service
+      dest: /etc/systemd/system/kube-controller-manager.service
+    become: yes
 
   - name: Copy kube-scheduler kubeconfig 
     copy:
       src: kube-scheduler.kubeconfig
       dest: /var/lib/kubernetes/
+    become: yes
 
   - name: Copy kube-scheduler.yaml configuration file
     copy: 
       src: kube-scheduler.yaml
       dest: /etc/kubernetes/config/kube-scheduler.yaml
+    become: yes  
 
   - name: Copy kube-scheduler.service systemd unit file
     copy: 
       src: kube-scheduler.service
       dest: /etc/systemd/system/kube-scheduler.service
+    become: yes
 
   - name: Start Controllers - kube-apiserver
     systemd:
@@ -67,6 +76,7 @@
       daemon_reload: yes
       name: kube-apiserver
       enabled: yes
+    become: yes
 
   - name: Start Controllers - kube-controller-manager
     systemd:
@@ -74,6 +84,7 @@
       daemon_reload: yes
       name: kube-controller-manager
       enabled: yes
+    become: yes
 
   - name: Start Controllers - kube-scheduler
     systemd:
@@ -81,6 +92,7 @@
       daemon_reload: yes
       name: kube-scheduler
       enabled: yes
+    become: yes
 
   - name: Pause for 15 sec 
     pause:

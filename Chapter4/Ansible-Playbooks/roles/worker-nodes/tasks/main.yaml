@@ -108,7 +108,7 @@
     run_once: true
 
   - name: Create K8S Proxy Configuration file - Step III
-    local_action: shell chdir=roles/worker-nodes/files kubectl config default   --cluster={{ k8s_cluster_name }} --user=kube-proxy --kubeconfig=kube-proxy.kubeconfig
+    local_action: shell chdir=roles/worker-nodes/files kubectl config set-context default --cluster={{ k8s_cluster_name }} --user=kube-proxy --kubeconfig=kube-proxy.kubeconfig
     run_once: true
 
   - name: Create K8S Proxy Configuration file - Step IV

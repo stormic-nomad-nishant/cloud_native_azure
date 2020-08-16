@@ -1,17 +1,21 @@
 ---
-  - name: Get Azure instance metadata for POD CIDR
-    shell: |
-      curl --silent -H Metadata:true http://169.254.169.254/metadata/instance/compute/tags?api-version=2017-08-01&format=text | cut -d : -f2
-    register: azure_meta_pod_cidr
-
-  - name: Save the azure_meta_pop_cidr
-    set_fact:
-      pod_cidr: "{{ azure_meta_pod_cidr.stdout }}"
-
-  - name: Upload the bridge file for CNI
+  - name: Upload the bridge file for CNI - worker0 PODCIDR
     template: 
-      src: 10-bridge.conf.j2
+      src: 10-bridge-worker0.conf.j2
       dest: /etc/cni/net.d/10-bridge.conf
+    when: ansible_hostname == "worker0"
+
+  - name: Upload the bridge file for CNI - worker1 PODCIDR
+    template: 
+      src: 10-bridge-worker1.conf.j2
+      dest: /etc/cni/net.d/10-bridge.conf
+    when: ansible_hostname == "worker1"
+
+  - name: Upload the bridge file for CNI - worker2 PODCIDR
+    template: 
+      src: 10-bridge-worker2.conf.j2
+      dest: /etc/cni/net.d/10-bridge.conf
+    when: ansible_hostname == "worker2"
 
   - name: Copy loopback file
     copy:
@@ -85,19 +89,19 @@
 
   - name: Copy kublet-config to worker0
     template:
-      src: kubelet-config.yaml.j2
+      src: kubelet-config-worker0.yaml.j2
       dest: /var/lib/kubelet/kubelet-config.yaml
     when: ansible_hostname == "worker0"
 
   - name: Copy kublet-config to worker1
     template:
-      src: kubelet-config.yaml.j2
+      src: kubelet-config-worker1.yaml.j2
       dest: /var/lib/kubelet/kubelet-config.yaml
     when: ansible_hostname == "worker1"
 
   - name: Copy kublet-config to worker2
     template:
-      src: kubelet-config.yaml.j2
+      src: kubelet-config-worker2.yaml.j2
       dest: /var/lib/kubelet/kubelet-config.yaml
     when: ansible_hostname == "worker2"
 

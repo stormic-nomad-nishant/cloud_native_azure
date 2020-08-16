@@ -91,7 +91,7 @@
       - kube-controller-manager.kubeconfig
       - kube-scheduler.kubeconfig
 
-  - name: Copy Encruption Key Config file to controllers
+  - name: Copy Encryption Key Config file to controllers
     template: 
         src: encryption-config.yaml.j2
         dest: ~/encryption-config.yaml

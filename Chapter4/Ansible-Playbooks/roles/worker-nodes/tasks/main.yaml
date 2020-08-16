@@ -4,42 +4,42 @@
     when: ansible_hostname == "worker0"
 
   - name: Generate 2nd Worker1 Certificates
-  	local_action: shell chdir=roles/worker-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{ ansible_hostname }},{{loadbalancer_public_ip}},{{ ansible_host }} -profile=kubernetes worker1-csr.json | cfssljson -bare {{ ansible_hostname }} 
-  	when: ansible_hostname == "worker1"
+    local_action: shell chdir=roles/worker-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{ ansible_hostname }},{{loadbalancer_public_ip}},{{ ansible_host }} -profile=kubernetes worker1-csr.json | cfssljson -bare {{ ansible_hostname }} 
+    when: ansible_hostname == "worker1"
 
   - name: Generate 3rd Worker2 Certificates
-  	local_action: shell chdir=roles/worker-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{ ansible_hostname }},{{loadbalancer_public_ip}},{{ ansible_host }} -profile=kubernetes worker2-csr.json | cfssljson -bare {{ ansible_hostname }} 
-  	when: ansible_hostname == "worker2"
+    local_action: shell chdir=roles/worker-nodes/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname={{ ansible_hostname }},{{loadbalancer_public_ip}},{{ ansible_host }} -profile=kubernetes worker2-csr.json | cfssljson -bare {{ ansible_hostname }} 
+    when: ansible_hostname == "worker2"
 
   - name: Copy the generated keys & certs to worker0 worker-nodes
-  	copy:
-  		src: "{{ item }}"
-  		dest: ~/
-  	with_items: 
-  	  - ca.pem
-  	  - worker0.pem
-  	  - worker0-key.pem
-  	when: ansible_hostname == "worker0"
+    copy:
+      src: "{{ item }}"
+      dest: ~/
+    with_items: 
+      - ca.pem
+      - worker0.pem
+      - worker0-key.pem
+    when: ansible_hostname == "worker0"
 
   - name: Copy the generated keys & certs to worker1 worker-nodes
-  	copy:
-  		src: "{{ item }}"
-  		dest: ~/
-  	with_items: 
-  	  - ca.pem
-  	  - worker1.pem
-  	  - worker1-key.pem
-  	when: ansible_hostname == "worker1"
+    copy:
+      src: "{{ item }}"
+      dest: ~/
+    with_items: 
+      - ca.pem
+      - worker1.pem
+      - worker1-key.pem
+    when: ansible_hostname == "worker1"
 
   - name: Copy the generated keys & certs to worker2 worker-nodes
-  	copy:
-  		src: "{{ item }}"
-  		dest: ~/
-  	with_items: 
-  	  - ca.pem
-  	  - worker2.pem
-  	  - worker2-key.pem
-  	when: ansible_hostname == "worker2"
+    copy:
+      src: "{{ item }}"
+      dest: ~/
+    with_items: 
+      - ca.pem
+      - worker2.pem
+      - worker2-key.pem
+    when: ansible_hostname == "worker2"
 
   - name: Create K8S configuration file for Worker0 - Step I
     local_action: shell chdir=roles/worker-nodes/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ loadbalancer_public_ip }}:6443 --kubeconfig={{ ansible_hostname }}.kubeconfig

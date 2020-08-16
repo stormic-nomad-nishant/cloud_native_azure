@@ -39,7 +39,7 @@
     become: yes
 
   - name: List etcd members
-    shell: sudo ETCDCTL_API=3 etcdctl member list --endpoints=https://127.0.0.1:2379 --cacert=/etc/etcd/ca.pem --cert=/etc/etcd/kubernetes.pem --key=/etc/etcd/kubernetes-key.pem
+    shell: sudo ETCDCTL_API=3 etcdctl member list --endpoints=http://127.0.0.1:2379 --cacert=/etc/etcd/ca.pem --cert=/etc/etcd/kubernetes.pem --key=/etc/etcd/kubernetes-key.pem
     register: etcd_run_output
 
   - name: Show output

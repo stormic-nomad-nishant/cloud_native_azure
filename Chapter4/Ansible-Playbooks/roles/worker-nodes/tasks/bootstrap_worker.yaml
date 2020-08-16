@@ -120,6 +120,7 @@
     copy:
       src: kube-proxy.service
       dest: /etc/systemd/system/kube-proxy.service
+    become: yes
 
   - name: Start containerd workers
     systemd:
@@ -127,6 +128,7 @@
       daemon_reload: yes
       name: containerd
       enabled: yes
+    become: yes
 
   - name: Start kubelet workers
     systemd:
@@ -134,6 +136,7 @@
       daemon_reload: yes
       name: kubelet
       enabled: yes
+    become: yes
 
   - name: Start kube-proxy workers
     systemd:
@@ -141,6 +144,7 @@
       daemon_reload: yes
       name: kube-proxy
       enabled: yes
+    become: yes
 
   - name: Check the kuberneters worker nodes
     shell: kubectl get nodes

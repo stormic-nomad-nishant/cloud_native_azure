@@ -169,12 +169,4 @@
       enabled: yes
     become: yes
 
-  - name: Check the kuberneters worker nodes
-    shell: kubectl get nodes
-    register: kuberctl_getnodes
-
-  - name: Show final output
-    debug:
-      var: kuberctl_getnodes.stdout_lines
-
 

@@ -1,0 +1,15 @@
+---
+  - name: Generate the kubeconfig file for remote access the cluster - Step I set cluster
+    local_action: shell chdir=roles/remote_access_k8s/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ loadbalancer_public_ip }}:6443 
+
+  - name: Generate the kubeconfig file for remote access the cluster - Step II set set credentials
+    local_action: shell chdir=roles/remote_access_k8s/files kubectl config set-credentials admin --client-certificate=admin.pem --client-key=admin-key.pem
+
+  - name: Generate the kubeconfig file for remote access the cluster - Step III set context
+    local_action: shell chdir=roles/remote_access_k8s/files kubectl config set-context {{ k8s_cluster_name }} --cluster={{ k8s_cluster_name }} --user=admin
+
+  - name: Generate  the kubeconfig file for remote access the cluster - Step IV use context
+    local_action: shell chdir=roles/remote_access_k8s/files kubectl config use-context {{ k8s_cluster_name }}
+    
+
+

@@ -1,0 +1,4 @@
+- hosts: controller
+  #become: true
+  roles:
+    - {role: remote_access_k8s}

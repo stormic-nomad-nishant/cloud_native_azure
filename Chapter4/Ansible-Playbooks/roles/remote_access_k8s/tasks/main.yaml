@@ -1,4 +1,8 @@
 ---
+  - name: Re-Generate k8s Admin Client Cert & Private key
+    local_action: shell chdir=roles/remote_access_k8s/files cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=kubernetes admin-csr.json | cfssljson -bare admin
+    run_once: true
+
   - name: Generate the kubeconfig file for remote access the cluster - Step I set cluster
     local_action: shell chdir=roles/remote_access_k8s/files kubectl config set-cluster {{ k8s_cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ loadbalancer_public_ip }}:6443 
     run_once: true

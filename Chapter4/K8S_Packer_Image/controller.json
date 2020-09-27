@@ -2,10 +2,10 @@
   "builders": [{
     "type": "azure-arm",
 
-    "client_id": "a0a99868-7ce4-4b25-9226-2374f24bd43e",
-    "client_secret": "aH2cK.wpqjPuUkfoAUYB2wtKZo86Rcz0pR",
-    "tenant_id": "baeb0488-d28a-41cd-a2bd-d9409714a068",
-    "subscription_id": "b5627140-9087-4305-a94c-3b16afe86791",
+    "client_id": " ",
+    "client_secret": " ",
+    "tenant_id": " ",
+    "subscription_id": " ",
 
     "managed_image_resource_group_name": "K8Scluster",
     "managed_image_name": "k8s_controller",

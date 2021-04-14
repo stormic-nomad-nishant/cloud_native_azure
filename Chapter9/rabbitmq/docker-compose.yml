@@ -6,8 +6,10 @@ services:
       - "5672:5672"
       - "15672:15672"
       - "15592:15692"
-  benthos:
-    image: jeffail/benthos
-    ports: 
-      - "4195:4195"
+#  benthos:
+#    image: jeffail/benthos
+#    ports: 
+#       - "4195:4195"
+#    volumes: 
+#      - ${PWD}/benthos-amqp.yml:/benthos.yml
 

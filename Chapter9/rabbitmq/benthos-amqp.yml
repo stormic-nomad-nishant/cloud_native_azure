@@ -1,0 +1,38 @@
+http:
+  enabled: true
+  address: 0.0.0.0:4195
+  root_path: /benthos
+  debug_endpoints: true
+  cert_file: ""
+  key_file: ""
+input:
+  http_server:
+    path: /post
+buffer:
+  none: {}
+pipeline:
+  threads: 1
+  processors: []
+output:
+  label: ""
+  amqp_0_9:
+    url: amqp://guest:guest@localhost:5672/
+    exchange: benthos-exchange
+    key: benthos-key
+    type: ""
+    metadata:
+      exclude_prefixes: []
+    max_in_flight: 10
+logger:
+  level: TRACE
+  format: json
+  add_timestamp: true
+  static_fields:
+    '@service': benthos
+metrics:
+  http_server:
+    prefix: benthos
+    path_mapping: ""
+tracer:
+  none: {}
+shutdown_timeout: 20s

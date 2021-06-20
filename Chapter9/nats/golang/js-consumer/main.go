@@ -37,7 +37,7 @@ func main() {
 			break
 		}
 		for _, msg := range msgs {
-			log.Printf("Received: %s", msg.Data)
+			fmt.Printf("%s\n", msg.Data)
 			_ = msg.Ack()
 		}
 	}

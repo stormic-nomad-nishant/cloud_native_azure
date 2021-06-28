@@ -18,7 +18,7 @@ rate_limit_resources:
 input:
   label: ""
   http_client:
-    url: http://100.119.182.45:8222/varz
+    url: http://192.168.2.238:8222/varz
     verb: GET
     headers:
       Content-Type: application/octet-stream
@@ -30,8 +30,6 @@ input:
       reconnect: true
       codec: lines
 
-
-
 buffer:
   none: {}
 pipeline:
@@ -39,8 +37,11 @@ pipeline:
   processors: []
 output:
   label: ""
-  stdout:
-    delimiter: ""
+  nats:
+    urls:
+      - nats://192.168.2.247:4222
+    subject: benthos.varz
+
 logger:
   level: INFO
   format: json

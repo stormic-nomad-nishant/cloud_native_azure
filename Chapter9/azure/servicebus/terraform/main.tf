@@ -39,3 +39,8 @@ resource "azurerm_servicebus_subscription" "example" {
   topic_name          = azurerm_servicebus_topic.example.name
   max_delivery_count  = 1
 }
+
+/* output "connstr" {
+  value = mdfranz-servicebus-namespace.default_primary_connection_string
+}
+*/

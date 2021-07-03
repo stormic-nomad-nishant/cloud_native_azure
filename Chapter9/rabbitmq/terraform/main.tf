@@ -14,6 +14,17 @@ provider "rabbitmq" {
 }
 
 # Create a virtual host
-resource "rabbitmq_vhost" "tfvhost" {
-  name = "tfvhost"
+resource "rabbitmq_vhost" "suricata" {
+  name = "suricata"
+}
+
+resource "rabbitmq_permissions" "guest" {
+  user  = "guest"
+  vhost = "{rabbitmq_vhost.suricata.name}"
+
+  permissions {
+    configure = ".*"
+    write     = ".*"
+    read      = ".*"
+  }
 }

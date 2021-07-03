@@ -3,7 +3,7 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "example" {
-  name     = "mdfranz-eventbus-group"
+  name     = "mdfranz-eventhub-group"
   location = "East US"
 }
 

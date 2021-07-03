@@ -1,25 +1,30 @@
 package main
 
 import (
-  "os"
-  "fmt"
-  "context"
+	"context"
+	"fmt"
+	"os"
+  "time"
 
 	eventhub "github.com/Azure/azure-event-hubs-go"
 )
 
-func main () {
-  ctx := context.Background()
-  hub, err := eventhub.NewHubFromConnectionString(os.Getenv("EVENT_HUBS_NAMESPACE_CONNECTION_STRING"))
+func main() {
+  ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 
-  if err !=  nil {
+  defer cancel()
+	hub, err := eventhub.NewHubFromConnectionString(os.Getenv("EVENTHUB_CONNECTION_STRING"))
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(hub)
+
+  err = hub.Send(ctx, eventhub.NewEventFromString("hello Azure!"))
+	fmt.Println(err)
+
+  if err != nil {
     panic(err)
   }
-
-  fmt.Println(hub)
-  hub.Send(ctx,eventhub.NewEventFromString("hello Azure!"))
-  hub.Send(ctx,eventhub.NewEventFromString("hello Azure!"))
-  hub.Send(ctx,eventhub.NewEventFromString("hello Azure!"))
-
 }
-

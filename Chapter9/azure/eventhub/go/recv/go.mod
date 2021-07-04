@@ -1,4 +1,4 @@
-module cnia/eventhubs
+module cnia/recv
 
 go 1.16
 

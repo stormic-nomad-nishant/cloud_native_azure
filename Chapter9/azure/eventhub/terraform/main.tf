@@ -3,12 +3,12 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "example" {
-  name     = "mdfranz-eventhub-group"
+  name     = "oracnia-eventhub-group"
   location = "East US"
 }
 
 resource "azurerm_eventhub_namespace" "example" {
-  name                = "mdfranz-eventhub-namespace"
+  name                = "oracnia-eventhub-namespace"
   location            = "East US"
   resource_group_name = azurerm_resource_group.example.name
   sku                 = "Standard"
@@ -16,7 +16,7 @@ resource "azurerm_eventhub_namespace" "example" {
 }
 
 resource "azurerm_eventhub" "example" {
-  name                = "mdfranz-eventhub"
+  name                = "oracnia-eventhub"
   namespace_name      = azurerm_eventhub_namespace.example.name
   resource_group_name = azurerm_resource_group.example.name
   partition_count     = 1 
@@ -24,7 +24,7 @@ resource "azurerm_eventhub" "example" {
 }
 
 resource "azurerm_eventhub_consumer_group" "example" {
-  name                = "mdfranz-consumergroup"
+  name                = "oracnia-consumergroup"
   resource_group_name = azurerm_resource_group.example.name
   namespace_name      = azurerm_eventhub_namespace.example.name
   eventhub_name       = azurerm_eventhub.example.name

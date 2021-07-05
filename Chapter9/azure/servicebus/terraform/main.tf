@@ -3,12 +3,12 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "example" {
-  name     = "mdfranz-servicebus-group"
+  name     = "oracnia-servicebus-group"
   location = "Central US"
 }
 
 resource "azurerm_servicebus_namespace" "example" {
-  name                = "mdfranz-servicebus-namespace"
+  name                = "oracnia-servicebus-namespace"
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
   sku                 = "Standard"
@@ -19,28 +19,23 @@ resource "azurerm_servicebus_namespace" "example" {
 }
 
 resource "azurerm_servicebus_queue" "example" {
-  name                = "mdfranz-servicebus-queue"
+  name                = "oracnia-servicebus-queue"
   resource_group_name = azurerm_resource_group.example.name
   namespace_name      = azurerm_servicebus_namespace.example.name
   enable_partitioning = true
 }
 
 resource "azurerm_servicebus_topic" "example" {
-  name                = "mdfranz-servicebus-topic"
+  name                = "oracnia-servicebus-topic"
   resource_group_name = azurerm_resource_group.example.name
   namespace_name      = azurerm_servicebus_namespace.example.name
   enable_partitioning = true
 }
 
 resource "azurerm_servicebus_subscription" "example" {
-  name                = "mdfranz-servicebus-subscription"
+  name                = "oracnia-servicebus-subscription"
   resource_group_name = azurerm_resource_group.example.name
   namespace_name      = azurerm_servicebus_namespace.example.name
   topic_name          = azurerm_servicebus_topic.example.name
   max_delivery_count  = 1
 }
-
-/* output "connstr" {
-  value = mdfranz-servicebus-namespace.default_primary_connection_string
-}
-*/

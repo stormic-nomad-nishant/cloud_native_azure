@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Adapted from  https://pypi.org/project/azure-eventgrid/#send-an-event-grid-event
+# pip3 install azure-eventgrid
 
 import os,sys
 from azure.core.credentials import AzureKeyCredential

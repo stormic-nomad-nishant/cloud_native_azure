@@ -4,7 +4,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "example" {
   name     = "oracnia-servicebus-group"
-  location = "Central US"
+  location = "East US"
 }
 
 resource "azurerm_servicebus_namespace" "example" {

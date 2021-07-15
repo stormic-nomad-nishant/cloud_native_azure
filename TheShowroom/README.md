@@ -22,6 +22,7 @@ Most of the focus is on containers
 # Solutions Space 
 
 ## Tools
+
 ### Notary
 - https://www.youtube.com/watch?v=JK70k_B87mw
 - [Notary v2: Redesigning the Secure Supply Chain for Containers - Justin Cormack & Steve Lasker](https://www.youtube.com/watch?v=LKpFynI0S_w)
@@ -29,6 +30,10 @@ Most of the focus is on containers
 
 ### Docker Content Trust
 - https://docs.docker.com/engine/security/trust/
+
+### Sigstore 
+- [rekor](https://github.com/sigstore/rekor) - an immutable tamper resistant ledger of metadata generated within a software projects supply chain. Rekor will enable software maintainers and build systems to record signed metadata to an immutable record
+- [cosign](https://github.com/sigstore/cosign) - Container Signing, Verification and Storage in an OCI registry.
 
 ### Container Scanning
 - Anchore

@@ -8,4 +8,5 @@ output "Blob-URL" {
 
 output "Primary-Access-Key" {
   value = "${module.CloudNativeAzure-strg-backend.Storage-Primanry-Access-key}"
+  sensitive = true
 }

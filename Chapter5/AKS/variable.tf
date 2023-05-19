@@ -1,7 +1,7 @@
 
 
 variable "agent_count" {
-    default = 3
+    default = 5
 }
 
 variable "ssh_public_key" {

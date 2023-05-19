@@ -8,4 +8,5 @@ output "Blob-URL" {
 
 output "Primary-Access-Key" {
   value = "${module.CNA-Terraform-storage-backend.Storage-Primanry-Access-key}"
+  sensitive = true
 }

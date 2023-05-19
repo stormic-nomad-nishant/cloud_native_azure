@@ -30,7 +30,7 @@ resource "azurerm_network_interface" "generic-nic" {
   ip_configuration {
     name                          = "${var.vm_prefix}-${count.index}-ip-config"
     subnet_id                     = var.subnet_id
-    private_ip_address_allocation = element(var.private_ip_addresses, count.index) != "" ? "static" : "dynamic"
+    private_ip_address_allocation = element(var.private_ip_addresses, count.index) != "" ? "Static" : "Dynamic"
     public_ip_address_id          = element(var.public_ip_address_id, count.index)
     private_ip_address            = element(var.private_ip_addresses, count.index)
   }
